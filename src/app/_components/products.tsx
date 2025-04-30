@@ -1,7 +1,7 @@
 "use client";
-import Pagination from "./pagination";
-
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Product } from "@/types/shopify";
 
 const query = `
   {
@@ -10,11 +10,16 @@ const query = `
         node {
           id
           title
+          handle
           description
           variants(first: 1) {
             edges {
               node {
                 priceV2 {
+                  amount
+                  currencyCode
+                }
+                compareAtPriceV2 {
                   amount
                   currencyCode
                 }
@@ -34,212 +39,123 @@ const query = `
   }
 `;
 
-const fakeData = {
-  data: {
-    products: {
-      edges: [
-        {
-          node: {
-            id: "gid://shopify/Product/8633263259876",
-            title: "Ocean Blue Shirt",
-            description:
-              "Ocean blue cotton shirt with a narrow collar and buttons down the front and long sleeves. Comfortable fit and tiled kalidoscope patterns.",
-            variants: {
-              edges: [
-                {
-                  node: {
-                    priceV2: {
-                      amount: "50.0",
-                      currencyCode: "CAD",
-                    },
-                  },
-                },
-              ],
-            },
-            images: {
-              edges: [
-                {
-                  node: {
-                    src: "https://cdn.shopify.com/s/files/1/0733/3353/9044/files/young-man-in-bright-fashion_925x_f8364977-be40-45d7-905e-f119b54faa24.jpg?v=1745617574",
-                  },
-                },
-              ],
-            },
-          },
-        },
-        {
-          node: {
-            id: "gid://shopify/Product/8633263292644",
-            title: "Classic Varsity Top",
-            description:
-              "Womens casual varsity top, This grey and black buttoned top is a sport-inspired piece complete with an embroidered letter.",
-            variants: {
-              edges: [
-                {
-                  node: {
-                    priceV2: {
-                      amount: "60.0",
-                      currencyCode: "CAD",
-                    },
-                  },
-                },
-              ],
-            },
-            images: {
-              edges: [
-                {
-                  node: {
-                    src: "https://cdn.shopify.com/s/files/1/0733/3353/9044/files/casual-fashion-woman_925x_dcbe0007-a7c5-4c35-97c1-c9f470b2ddbf.jpg?v=1745617577",
-                  },
-                },
-              ],
-            },
-          },
-        },
-        {
-          node: {
-            id: "gid://shopify/Product/8633263325412",
-            title: "Yellow Wool Jumper",
-            description:
-              "Knitted jumper in a soft wool blend with low dropped shoulders and wide sleeves and think cuffs. Perfect for keeping warm during Fall.",
-            variants: {
-              edges: [
-                {
-                  node: {
-                    priceV2: {
-                      amount: "80.0",
-                      currencyCode: "CAD",
-                    },
-                  },
-                },
-              ],
-            },
-            images: {
-              edges: [
-                {
-                  node: {
-                    src: "https://cdn.shopify.com/s/files/1/0733/3353/9044/files/autumn-photographer-taking-picture_925x_e5fa3b1c-5463-4aca-bf91-e37dca647341.jpg?v=1745617579",
-                  },
-                },
-              ],
-            },
-          },
-        },
-        {
-          node: {
-            id: "gid://shopify/Product/8633263358180",
-            title: "Floral White Top",
-            description: "Stylish sleeveless white top with a floral pattern.",
-            variants: {
-              edges: [
-                {
-                  node: {
-                    priceV2: {
-                      amount: "75.0",
-                      currencyCode: "CAD",
-                    },
-                  },
-                },
-              ],
-            },
-            images: {
-              edges: [
-                {
-                  node: {
-                    src: "https://cdn.shopify.com/s/files/1/0733/3353/9044/files/city-woman-fashion_925x_2x_54b2477e-b165-46bc-8355-8cb5a6bd9df2.jpg?v=1745617581",
-                  },
-                },
-              ],
-            },
-          },
-        },
-        {
-          node: {
-            id: "gid://shopify/Product/8633263390948",
-            title: "Striped Silk Blouse",
-            description:
-              "Ultra-stylish black and red striped silk blouse with buckle collar and matching button pants.",
-            variants: {
-              edges: [
-                {
-                  node: {
-                    priceV2: {
-                      amount: "50.0",
-                      currencyCode: "CAD",
-                    },
-                  },
-                },
-              ],
-            },
-            images: {
-              edges: [
-                {
-                  node: {
-                    src: "https://cdn.shopify.com/s/files/1/0733/3353/9044/files/striped-blouse-fashion_925x_5a77f28f-6ad9-4019-b065-d25493fc2163.jpg?v=1745617583",
-                  },
-                },
-              ],
-            },
-          },
-        },
-      ],
-    },
-  },
-};
-
 export default function Products() {
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [currentProductPage, setCurrentProductPage] = useState(0);
-  const [productsPerPage] = useState(3);
-
-  // useEffect(() => {
-  //   const fetchProducts = async () => {
-  //     try {
-  //       const response = await fetch(
-  //         `https://${process.env.NEXT_PUBLIC_SHOPIFY_STORE_URL}/api/${process.env.NEXT_PUBLIC_SHOPIFY_API_VERSION}/graphql.json`,
-  //         {
-  //           method: "POST",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //             "X-Shopify-Storefront-Access-Token": `${process.env.NEXT_PUBLIC_SHOPIFY_STORE_ACCESS_TOKEN}`,
-  //           },
-  //           body: JSON.stringify({ query }),
-  //         }
-  //       );
-
-  //       const data = await response.json();
-
-  //       setProducts(data.products.edges);
-  //       setLoading(false);
-  //     } catch (err) {
-  //       console.log("Error fetching products", err);
-  //     }
-  //   };
-  //   fetchProducts();
-  // }, []);
+  const [currentProductPage, setCurrentProductPage] = useState(1);
+  const [productsPerPage, setProductsPerPage] = useState(3);
 
   useEffect(() => {
-    setLoading(false);
-    setProducts(fakeData.data.products.edges.map((edge) => edge.node));
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(
+          `https://${process.env.NEXT_PUBLIC_SHOPIFY_STORE_URL}/api/${process.env.NEXT_PUBLIC_SHOPIFY_API_VERSION}/graphql.json`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Shopify-Storefront-Access-Token": `${process.env.NEXT_PUBLIC_SHOPIFY_STORE_ACCESS_TOKEN}`,
+            },
+            body: JSON.stringify({ query }),
+          }
+        );
+
+        const res = await response.json();
+
+        setProducts(res.data.products.edges.map((edge: any) => edge.node));
+        setLoading(false);
+      } catch (err) {
+        console.log("Error fetching products", err);
+      }
+    };
+    fetchProducts();
   }, []);
 
-  const startIndex = currentProductPage * productsPerPage;
-  const endIndex = (currentProductPage + 1) * productsPerPage;
+  useEffect(() => {
+    const updateProductsPerPage = () => {
+      if (window.matchMedia("(min-width: 1280px)").matches) {
+        setProductsPerPage(12); // xl
+      } else if (window.matchMedia("(min-width: 640px)").matches) {
+        setProductsPerPage(8); // sm
+      } else {
+        setProductsPerPage(4); // anything smaller
+      }
+    };
+
+    updateProductsPerPage();
+
+    window.addEventListener("resize", updateProductsPerPage);
+    return () => window.removeEventListener("resize", updateProductsPerPage);
+  }, []);
+
+  // Pagination Size
+  const startIndex = (currentProductPage - 1) * productsPerPage;
+  const endIndex = startIndex + productsPerPage;
   const currentProducts = products.slice(startIndex, endIndex);
 
   const totalPages = Math.ceil(products.length / productsPerPage);
 
-  const nextPage = () => {
+  // Pagination Buttons
+  const prevPage = () => {
     if (currentProductPage > 1) {
       setCurrentProductPage((page) => page - 1);
     }
   };
-  const prevPage = () => {
+  const nextPage = () => {
     if (currentProductPage < totalPages) {
       setCurrentProductPage((page) => page + 1);
     }
+  };
+  const updatePage = (index: number) => {
+    setCurrentProductPage(index);
+  };
+
+  // Product Router Navigation
+  const router = useRouter();
+  const productClick = (itemHandle: string) => {
+    router.push(`/${itemHandle}`);
+  };
+
+  // Access Current Price from Product Interface
+  const getPrice = (product: any) => {
+    const price = product.variants?.edges[0]?.node?.priceV2?.amount;
+    const currency = product.variants?.edges[0]?.node?.priceV2?.currencyCode;
+
+    return price
+      ? new Intl.NumberFormat("en-CA", { style: "currency", currency }).format(
+          price
+        )
+      : "N/A";
+  };
+
+  // Access Original Price from Product Interface
+  const getOriginalPrice = (product: any) => {
+    const compareAtPrice =
+      product.variants?.edges[0]?.node?.compareAtPriceV2?.amount;
+    const currency =
+      product.variants?.edges[0]?.node?.compareAtPriceV2?.currencyCode;
+
+    if (compareAtPrice) {
+      const price = new Intl.NumberFormat("en-CA", {
+        style: "currency",
+        currency,
+      }).format(compareAtPrice);
+
+      const discount = Math.round(
+        ((compareAtPrice - product.variants.edges[0].node.priceV2.amount) /
+          compareAtPrice) *
+          100
+      );
+
+      return (
+        <div className="flex">
+          <p className="line-through text-gray-500">{price}</p>
+          <p className="text-green-700">&nbsp;{discount}% off</p>
+        </div>
+      );
+    }
+    return null;
   };
 
   if (loading) {
@@ -247,50 +163,83 @@ export default function Products() {
   }
 
   return (
-    <div className="m-6">
-      <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+    <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-[95rem] lg:px-6">
+      <h2 className="text-4xl tracking-wide font-bold tracking-tight text-gray-900">
+        2025 SELECTION
+      </h2>
+      <p className="text-md text-gray-700 mt-6">
+        Nam consectetur lorem vitae enim semper, quis sollicitudin dolor
+        malesuada. Etiam sollicitudin est turpis.
+      </p>
+
+      <div className="mt-8 grid grid-cols-1 gap-x-6 gap-y-9 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
         {currentProducts.map((product, index) => (
-          <div key={index} className="group relative">
+          <div
+            key={index}
+            onClick={() => productClick(product.handle)}
+            className="group relative border border-transparent hover:border-black"
+          >
             <img
               src={product.images?.edges[0]?.node?.src}
-              alt="Front of men&#039;s Basic Tee in black."
-              className="aspect-square w-full rounded-md bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80"
+              alt={product.title}
+              className="aspect-square w-full bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80"
             />
-            <div className="mt-4 flex justify-between">
+            <div className="my-2 ml-2 flex justify-between">
               <div>
-                <h3 className="text-sm text-gray-700">
-                  <a href="#">
-                    <span
-                      aria-hidden="true"
-                      className="absolute inset-0"
-                    ></span>
-                    {product.title}
-                  </a>
+                <div className="flex font-bold">
+                  {/* Current Price */}
+                  <p className="text-md text-gray-900">{getPrice(product)}</p>
+
+                  {/* Original Price */}
+                  <div className="ml-3 text-md">
+                    {getOriginalPrice(product)}
+                  </div>
+                </div>
+
+                {/* Product Name */}
+                <h3 className="text-md text-gray-700">
+                  <span aria-hidden="true" className="absolute inset-0"></span>
+                  {product.title}
                 </h3>
-                <p className="mt-1 text-sm text-gray-500">Black</p>
               </div>
-              <p className="text-sm font-medium text-gray-900">
-                {product.variants?.edges[0]?.node?.priceV2?.amount
-                  ? new Intl.NumberFormat("en-CA", {
-                      style: "currency",
-                      currency:
-                        product.variants.edges[0].node.priceV2.currencyCode,
-                    }).format(product.variants.edges[0].node.priceV2.amount)
-                  : "N/A"}
-              </p>
             </div>
           </div>
         ))}
       </div>
-      <div className="mt-6">
-        <Pagination
-          currentPage={currentProductPage}
-          onNext={nextPage}
-          onPrev={prevPage}
-          totalItems={products.length}
-          totalPages={totalPages}
-          itemsPerPage={productsPerPage}
-        />
+
+      {/* Pagination */}
+      <div className="flex justify-end mt-6 text-gray-500">
+        <button
+          className="flex border border-black items-center justify-center py-1 px-3 hover:text-gray-400 hover:border-gray-400 transition"
+          onClick={prevPage}
+          disabled={currentProductPage === 1}
+        >
+          PREV
+        </button>
+
+        <div className="hidden sm:flex">
+          {Array.from({ length: totalPages }, (_, index) => (
+            <div
+              className={`flex border border-black items-center justify-center ml-3 px-4 py-2 ${
+                index + 1 === currentProductPage
+                  ? "bg-indigo-600 text-white"
+                  : "bg-white hover:text-gray-400 hover:border-gray-400 transition"
+              }`}
+              key={index}
+              onClick={() => updatePage(index + 1)}
+            >
+              {index + 1}
+            </div>
+          ))}
+        </div>
+
+        <button
+          className="flex border border-black items-center justify-center ml-3 py-1 px-3 hover:text-gray-400 hover:border-gray-400 transition"
+          onClick={nextPage}
+          disabled={currentProductPage === totalPages}
+        >
+          NEXT
+        </button>
       </div>
     </div>
   );

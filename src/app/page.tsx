@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import Products from "./_components/products";
+import Products from "./_components/Products";
 
 export default function Home() {
   return (
