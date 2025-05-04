@@ -1,10 +1,10 @@
-import Header from "./_components/Header";
-import Products from "./_components/Products";
-import Footer from "./_components/Footer";
+import Header from "@/app/_components/Header";
+import Products from "@/app/_components/Products";
+import Footer from "@/app/_components/Footer";
 
 const query = `
   {
-    products(first: 50) {
+    products(first: 50, query: "tag:classic") {
       edges {
         node {
           id
@@ -14,6 +14,7 @@ const query = `
           variants(first: 1) {
             edges {
               node {
+                id
                 priceV2 {
                   amount
                   currencyCode
@@ -38,18 +39,19 @@ const query = `
   }
 `;
 
-export default function Home() {
+export default function Classics() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
 
       <div className="w-full mx-auto max-w-2xl px-4 pt-16 pb-4 sm:px-6 sm:pt-24 lg:max-w-[95rem] lg:px-6">
         <h2 className="text-4xl tracking-wide font-bold tracking-tight text-gray-900">
-          2025 SELECTION
+          CLASSIC OFFERINGS
         </h2>
         <p className="text-md text-gray-700 mt-6">
-          Nam consectetur lorem vitae enim semper, quis sollicitudin dolor
-          malesuada. Etiam sollicitudin est turpis.
+          Mauris sollicitudin tincidunt ligula nec ultricies. Suspendisse
+          egestas, dolor non finibus vehicula, arcu massa tempus eros, quis
+          imperdiet sem tortor sed neque.
         </p>
       </div>
 

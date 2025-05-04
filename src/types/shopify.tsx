@@ -12,6 +12,7 @@ export interface Price {
 }
 
 export interface VariantNode {
+  id: string;
   priceV2: Price;
   compareAtPriceV2?: Price;
   weight: number;
@@ -33,4 +34,12 @@ export interface Product {
   variants: {
     edges: VariantEdge[];
   };
+}
+
+export interface ProductVariant {
+  id: string;
+  title: string;
+  price: Price;
+  compareAtPrice: Price;
+  product: Product;
 }

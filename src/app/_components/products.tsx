@@ -3,43 +3,11 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Product } from "@/types/shopify";
 
-const query = `
-  {
-    products(first: 50) {
-      edges {
-        node {
-          id
-          title
-          handle
-          description
-          variants(first: 1) {
-            edges {
-              node {
-                priceV2 {
-                  amount
-                  currencyCode
-                }
-                compareAtPriceV2 {
-                  amount
-                  currencyCode
-                }
-              }
-            }
-          }
-          images(first: 1) {
-            edges {
-              node {
-                src
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`;
+interface ProductsProps {
+  query: string;
+}
 
-export default function Products() {
+export default function Products({ query }: ProductsProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -62,15 +30,14 @@ export default function Products() {
         );
 
         const res = await response.json();
-
         setProducts(res.data.products.edges.map((edge: any) => edge.node));
         setLoading(false);
       } catch (err) {
-        console.log("Error fetching products", err);
+        console.error("Error fetching products", err);
       }
     };
     fetchProducts();
-  }, []);
+  }, [query]);
 
   useEffect(() => {
     const updateProductsPerPage = () => {
@@ -163,21 +130,13 @@ export default function Products() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-[95rem] lg:px-6">
-      <h2 className="text-4xl tracking-wide font-bold tracking-tight text-gray-900">
-        2025 SELECTION
-      </h2>
-      <p className="text-md text-gray-700 mt-6">
-        Nam consectetur lorem vitae enim semper, quis sollicitudin dolor
-        malesuada. Etiam sollicitudin est turpis.
-      </p>
-
+    <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:max-w-[95rem] lg:px-6">
       <div className="mt-8 grid grid-cols-1 gap-x-6 gap-y-9 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
         {currentProducts.map((product, index) => (
           <div
             key={index}
             onClick={() => productClick(product.handle)}
-            className="group relative border border-transparent hover:border-black"
+            className="group relative border border-transparent cursor-pointer hover:border-black"
           >
             <img
               src={product.images?.edges[0]?.node?.src}
@@ -210,7 +169,7 @@ export default function Products() {
       {/* Pagination */}
       <div className="flex justify-end mt-6 text-gray-500">
         <button
-          className="flex border border-black items-center justify-center py-1 px-3 hover:text-gray-400 hover:border-gray-400 transition"
+          className="flex border border-black items-center justify-center py-1 px-3 cursor-pointer hover:text-gray-400 hover:border-gray-400 transition"
           onClick={prevPage}
           disabled={currentProductPage === 1}
         >
@@ -223,7 +182,7 @@ export default function Products() {
               className={`flex border border-black items-center justify-center ml-3 px-4 py-2 ${
                 index + 1 === currentProductPage
                   ? "bg-indigo-600 text-white"
-                  : "bg-white hover:text-gray-400 hover:border-gray-400 transition"
+                  : "bg-white hover:text-gray-400 hover:border-gray-400 transition cursor-pointer"
               }`}
               key={index}
               onClick={() => updatePage(index + 1)}
@@ -234,7 +193,7 @@ export default function Products() {
         </div>
 
         <button
-          className="flex border border-black items-center justify-center ml-3 py-1 px-3 hover:text-gray-400 hover:border-gray-400 transition"
+          className="flex border border-black items-center justify-center ml-3 py-1 px-3 cursor-pointer hover:text-gray-400 hover:border-gray-400 transition"
           onClick={nextPage}
           disabled={currentProductPage === totalPages}
         >
