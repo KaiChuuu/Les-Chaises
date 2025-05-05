@@ -23,6 +23,10 @@ export interface VariantEdge {
   node: VariantNode;
 }
 
+export interface Edge {
+  node: Product;
+}
+
 export interface Product {
   id: string;
   title: string;

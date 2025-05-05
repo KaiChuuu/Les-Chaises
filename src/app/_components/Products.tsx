@@ -1,8 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Product } from "@/types/shopify";
-
+import { Product, Edge } from "@/types/shopify";
+import Image from "next/image";
 interface ProductsProps {
   query: string;
 }
@@ -30,7 +30,7 @@ export default function Products({ query }: ProductsProps) {
         );
 
         const res = await response.json();
-        setProducts(res.data.products.edges.map((edge: any) => edge.node));
+        setProducts(res.data.products.edges.map((edge: Edge) => edge.node));
         setLoading(false);
       } catch (err) {
         console.error("Error fetching products", err);
@@ -85,21 +85,22 @@ export default function Products({ query }: ProductsProps) {
   };
 
   // Access Current Price from Product Interface
-  const getPrice = (product: any) => {
+  const getPrice = (product: Product) => {
     const price = product.variants?.edges[0]?.node?.priceV2?.amount;
     const currency = product.variants?.edges[0]?.node?.priceV2?.currencyCode;
 
     return price
       ? new Intl.NumberFormat("en-CA", { style: "currency", currency }).format(
-          price
+          Number(price)
         )
       : "N/A";
   };
 
   // Access Original Price from Product Interface
-  const getOriginalPrice = (product: any) => {
-    const compareAtPrice =
-      product.variants?.edges[0]?.node?.compareAtPriceV2?.amount;
+  const getOriginalPrice = (product: Product) => {
+    const compareAtPrice = Number(
+      product.variants?.edges[0]?.node?.compareAtPriceV2?.amount
+    );
     const currency =
       product.variants?.edges[0]?.node?.compareAtPriceV2?.currencyCode;
 
@@ -110,7 +111,8 @@ export default function Products({ query }: ProductsProps) {
       }).format(compareAtPrice);
 
       const discount = Math.round(
-        ((compareAtPrice - product.variants.edges[0].node.priceV2.amount) /
+        ((compareAtPrice -
+          Number(product.variants.edges[0].node.priceV2.amount)) /
           compareAtPrice) *
           100
       );
@@ -138,9 +140,11 @@ export default function Products({ query }: ProductsProps) {
             onClick={() => productClick(product.handle)}
             className="group relative border border-transparent cursor-pointer hover:border-black"
           >
-            <img
+            <Image
               src={product.images?.edges[0]?.node?.src}
               alt={product.title}
+              width={1216}
+              height={1680}
               className="aspect-square w-full bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80"
             />
             <div className="my-2 ml-2 flex justify-between">

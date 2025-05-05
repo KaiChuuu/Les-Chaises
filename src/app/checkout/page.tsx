@@ -9,6 +9,7 @@ import { MdArrowRightAlt } from "react-icons/md";
 import CustomDropdown from "@/app/_components/CustomDropdown";
 import Footer from "@/app/_components/Footer";
 import Notification from "../_components/Notification";
+import Image from "next/image";
 
 const dropdownOptions = Array.from({ length: 15 }, (_, i) => i + 1);
 
@@ -180,9 +181,11 @@ export default function Checkout() {
                   }
                 >
                   <div className="lg:w-1/3 h-60">
-                    <img
+                    <Image
                       src={productVariant.product.images.edges[0].node.src}
                       alt={productVariant.title}
+                      width={1216}
+                      height={1680}
                       className="w-full h-full object-cover bg-gray-200"
                     />
                   </div>

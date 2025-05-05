@@ -1,5 +1,11 @@
 "use client";
-import { createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 
 type CartItem = {
   merchandiseId: string;
@@ -13,9 +19,13 @@ type CartContextType = {
   updateCart: (item: CartItem) => void;
 };
 
+interface CartProviderProps {
+  children: ReactNode;
+}
+
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-export const CartProvider = ({ children }: any) => {
+export const CartProvider = ({ children }: CartProviderProps) => {
   const [cart, setCart] = useState<CartItem[]>([]);
 
   useEffect(() => {

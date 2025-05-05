@@ -5,6 +5,7 @@ import { Product } from "@/types/shopify";
 import { useCart } from "@/app/context/CartContent";
 import Footer from "@/app/_components/Footer";
 import Notification from "../_components/Notification";
+import Image from "next/image";
 
 const unitMap: Record<string, string> = {
   KILOGRAMS: "kg",
@@ -51,7 +52,7 @@ query GetProductByHandle($handle: String!) {
 `;
 
 export default function ProductDetails({ params }: ProductDetailsProps) {
-  const { cart, addToCart } = useCart();
+  const { addToCart } = useCart();
 
   const { handle } = use(params);
 
@@ -143,24 +144,31 @@ export default function ProductDetails({ params }: ProductDetailsProps) {
       <Header />
       <div className="flex mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-5xl lg:px-6">
         {/* Angle Images */}
-        <div className="flex flex-col space-y-2 pr-5">
-          {Array.from({ length: 5 }, (_, index) => (
-            <img
-              key={index}
-              src={productImage}
-              alt={`Thumbnail ${index + 1}`}
-              className="w-full h-24 object-cover rounded"
-            />
-          ))}
+        <div className="flex flex-col space-y-3 pr-5">
+          {productImage &&
+            Array.from({ length: 5 }, (_, index) => (
+              <Image
+                key={index}
+                src={productImage}
+                alt={`Thumbnail ${index + 1}`}
+                width={50}
+                height={69}
+                className="w-full object-cover rounded"
+              />
+            ))}
         </div>
 
         {/* Base Image */}
         <div className="w-full lg:w-1/2">
-          <img
-            src={productImage}
-            alt={productTitle}
-            className="w-full h-full object-cover rounded-lg bg-gray-200"
-          />
+          {productImage && (
+            <Image
+              src={productImage}
+              alt={productTitle ?? ""}
+              width={1216}
+              height={1680}
+              className="w-full h-full object-cover rounded-lg bg-gray-200"
+            />
+          )}
         </div>
 
         {/* Information Column */}
@@ -200,15 +208,18 @@ export default function ProductDetails({ params }: ProductDetailsProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-5 gap-2">
-            {Array.from({ length: 8 }, (_, index) => (
-              <img
-                key={index}
-                src={productImage}
-                alt={`Thumbnail ${index + 1}`}
-                className="w-full h-20 object-cover rounded"
-              />
-            ))}
+          <div className="grid grid-cols-5 gap-3">
+            {productImage &&
+              Array.from({ length: 8 }, (_, index) => (
+                <Image
+                  key={index}
+                  src={productImage}
+                  alt={`Thumbnail ${index + 1}`}
+                  width={1216}
+                  height={1680}
+                  className="object-cover rounded"
+                />
+              ))}
           </div>
 
           <button

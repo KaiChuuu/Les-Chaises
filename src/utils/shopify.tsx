@@ -13,6 +13,10 @@ mutation cartCreate($input: CartInput) {
 }
 `;
 
+interface ShopifyError {
+  message: string;
+}
+
 // const customDomainURL = "";
 
 export const cartCreate = async (
@@ -43,7 +47,7 @@ export const cartCreate = async (
 
   if (errors?.length) {
     console.error("Shopify Cart Errors:", errors);
-    throw new Error(errors.map((e: any) => e.message).join(", "));
+    throw new Error(errors.map((e: ShopifyError) => e.message).join(", "));
   }
 
   return res.data.cartCreate.cart.checkoutUrl;
