@@ -17,3 +17,8 @@ Visit the live website: [Les Chaises](https://les-chaises.vercel.app/)
 - **Password Protection for Store Simulation**:
   - The store is password-protected for simulation purposes. 
   - To simulate a purchase through the bogus API, users can use the password **"chair-store"**.
+
+## Screenshots
+<p float="left">
+  <img src="cover.jpg" width="800" height="390" />
+</p>
