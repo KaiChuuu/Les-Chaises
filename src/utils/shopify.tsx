@@ -17,8 +17,6 @@ interface ShopifyError {
   message: string;
 }
 
-// const customDomainURL = "";
-
 export const cartCreate = async (
   cart: { merchandiseId: string; quantity: number }[]
 ) => {
@@ -35,7 +33,6 @@ export const cartCreate = async (
         variables: {
           input: {
             lines: cart,
-            // returnUrl: customDomainURL,
           },
         },
       }),
