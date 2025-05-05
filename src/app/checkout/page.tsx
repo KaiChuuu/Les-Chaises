@@ -81,7 +81,7 @@ export default function Checkout() {
       }
     };
     fetchProducts();
-  }, [query, cart]);
+  }, [cart]);
 
   const total = cart.reduce((sum, item) => {
     const product = products.find((p) => p.id === item.merchandiseId);
