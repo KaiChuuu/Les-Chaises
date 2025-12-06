@@ -6,7 +6,7 @@ Visit the live website: [Les Chaises](https://les-chaises.vercel.app/)
 
 ## Features
 - **Shopify Storefront API Integration**: 
-  - Utilized Shopify's Storefront API to create products, manage inventory, and receive orders.
+  - Utilized Shopify's Storefront API to create, view, and order products.
   - The store displays products based on different categories, each separated by Shopify tags (e.g., types of chairs).
 - **Shopping Cart**:
   - Created a shopping cart feature that stores user purchases while browsing.
@@ -17,3 +17,8 @@ Visit the live website: [Les Chaises](https://les-chaises.vercel.app/)
 - **Password Protection for Store Simulation**:
   - The store is password-protected for simulation purposes. 
   - To simulate a purchase through the bogus API, users can use the password **"chair-store"**.
+
+## Screenshots
+<p float="left">
+  <img src="cover.jpg" width="800" height="390" />
+</p>
